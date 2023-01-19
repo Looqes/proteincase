@@ -1,0 +1,5 @@
+# Ignore pycache files
+*.pyc
+
+# Ignore test.py
+test.py
