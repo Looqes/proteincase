@@ -99,40 +99,12 @@ class Board:
 
     # Get non-occupied neighbouring (NWSE) tiles of board grid
     # Returns wind direction of empty tiles
-    def get_possible_directions(self, x, y):
-        neighbors = self.get_neighboring_spaces((x, y))
+    def get_possible_directions(self):
+        neighbors = self.get_neighboring_spaces(self.last_set_coords)
         
         return [direction for direction in neighbors 
                 if neighbors[direction] == 0]
 
-
-    # # Extend the peptide chain being placed on the board by making it select
-    # # a possible direction to place the next peptide randomly
-    # def extend_peptide_chain(self, peptide):
-    #     possible_directions = []
-    #     x, y = self.last_set_coords
-            
-    #     possible_directions = self.get_possible_directions(x, y)
-    #     if not possible_directions:
-    #         return 1
-        
-    #     choice = random.choice(possible_directions)
-
-    #     newx, newy = x, y
-
-    #     if choice == "N":
-    #         newy -= 1
-    #     elif choice == "E":
-    #         newx += 1
-    #     elif choice == "S":
-    #         newy += 1
-    #     elif choice == "W":
-    #         newx -= 1
-        
-    #     self.put_peptide((newx, newy), peptide, self.placed_peptides[-1])
-    #     self.add_connection(self.last_set_coords, (newx, newy))
-
-    #     self.last_set_coords = (newx, newy)
 
 
     # Return contents of grid space at coords loc
@@ -185,3 +157,31 @@ class Board:
                         score -= 1
                 
         return int(score/2)
+
+
+    # Calculate the score of a given board
+    # For every neighbouring pair of H's (not counting those neighbouring in the
+    # original chain) the score of the board decreases by 1
+    # Function counts bonds twice (due to the second H of the bond being
+    # checked when it is reached further in the chain) so the score is halved
+    # before it is returned.
+    def calc_board_score_2(self):
+        score = 0
+
+        for peptide in self.placed_peptides:
+            type = peptide.type
+            if type == "H" or type == "C":
+                neighbors = self.get_non_chained_neighbours(peptide)
+
+                for neighbor in neighbors:
+                    neighbor_type = neighbor.type
+
+                    if (type == "H" and neighbor_type == "H" or
+                        type == "H" and neighbor_type == "C" or
+                        type == "C" and neighbor_type == "H"):
+                        score -= 1
+                    elif type == "C" and neighbor_type == "C":
+                        score -= 5
+                
+        return int(score/2)
+
