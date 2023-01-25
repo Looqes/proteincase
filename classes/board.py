@@ -13,6 +13,7 @@ class Board:
     def __init__(self, protein):
         protein_length = len(protein.peptides)
         self.size = protein_length
+        self.score = 0
 
         self.grid = [[0 for _ in range(protein_length * 2 + 1)]
                         for _ in range(protein_length * 2 + 1)]
@@ -92,6 +93,26 @@ class Board:
         if parent:
             parent.set_child(new_peptide)
 
+        self.update_score(new_peptide)
+
+
+    # Update the score of the board by checking if any bonds are made by
+    # having added a new_peptide
+    def update_score(self, new_peptide):
+        type = self.placed_peptides[-1].type
+        if type != "P":
+            neighbours = self.get_non_chained_neighbours(new_peptide)
+
+            if neighbours:
+                for neighbor in neighbours:
+                    neighbor_type = neighbor.type
+
+                    if (type == "H" and neighbor_type == "H" or
+                        type == "H" and neighbor_type == "C" or
+                        type == "C" and neighbor_type == "H"):
+                        self.score -= 1
+                    elif type == "C" and neighbor_type == "C":
+                        self.score -= 5
 
 
     # Add coordinate pairs which represent the chain-bonds between peptides to
@@ -141,33 +162,17 @@ class Board:
         return {"N": tiles[0], "E": tiles[1], "S": tiles[2], "W": tiles[3]}
 
     
+
     # Calculate the score of a given board
     # For every neighbouring pair of H's (not counting those neighbouring in the
     # original chain) the score of the board decreases by 1
     # Function counts bonds twice (due to the second H of the bond being
     # checked when it is reached further in the chain) so the score is halved
     # before it is returned.
+    ############################################################################
+    # No longer needed since boards now keep track of their scores as peptides
+    # are being placed on them.
     def calc_board_score(self):
-        score = 0
-
-        for peptide in self.placed_peptides:
-            if peptide.type == "H":
-                neighbors = self.get_non_chained_neighbours(peptide)
-
-                for neighbor in neighbors:
-                    if neighbor.type == "H":
-                        score -= 1
-                
-        return int(score/2)
-
-
-    # Calculate the score of a given board
-    # For every neighbouring pair of H's (not counting those neighbouring in the
-    # original chain) the score of the board decreases by 1
-    # Function counts bonds twice (due to the second H of the bond being
-    # checked when it is reached further in the chain) so the score is halved
-    # before it is returned.
-    def calc_board_score_2(self):
         score = 0
 
         for peptide in self.placed_peptides:

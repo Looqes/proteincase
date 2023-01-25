@@ -10,6 +10,7 @@ def fold_random(protein):
         # If peptide placement results in a chain that folds itself into
         # a dead end, the fold is invalid
         if place_random(board, peptide) == 1:
+            # print("dead end")
             return None
     
     return board
@@ -45,19 +46,19 @@ def place_random(board, peptide):
 
 # Fold i number of times and return the best result
 def random_folder(protein, iterations):
-    best_score = 0
+    best_score = 1
     best_board = None
 
     for i in range(iterations):
         result = fold_random(protein)
         
         if result:
-            score = result.calc_board_score_2()
+            score = result.score
             if score < best_score:
                 best_score = score
                 best_board = result
 
-    return best_board, best_score
+    return best_board, best_board.score
 
 
 

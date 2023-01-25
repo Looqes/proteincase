@@ -24,13 +24,17 @@ print(protein.peptides)
 print()
 
 if sys.argv[1] == "random":
+    # solved_board, score = random_folder(protein, 10000)
     solved_board, score = random_folder(protein, 10000)
+
 elif sys.argv[1] == "bfs":
     solved_board, score = bfs(protein)
 else:
     print("unrecognized algorithm")
 
-
-solved_board.display()
-print(score)
+if solved_board:
+    solved_board.display()
+    print(score)
+else:
+    print("No solved board was made...")
 
