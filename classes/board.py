@@ -5,7 +5,10 @@ import random
 from classes.peptide import *
 
 
-# Create square board as a grid
+# Create square board as a grid. Board is initialized with a protein that needs
+# to be placed (and folded) onto it. Board size is dependent on length of
+# protein. 
+# First protein is placed on initialization, in the middle of the board.
 class Board:
     def __init__(self, protein):
         protein_length = len(protein.peptides)
@@ -13,10 +16,10 @@ class Board:
 
         self.grid = [[0 for _ in range(protein_length * 2 + 1)]
                         for _ in range(protein_length * 2 + 1)]
-
-        board_middle = (protein_length, protein_length)
-        # Set first protein in the middle of the board (no parent -> None)
         self.placed_peptides = []
+
+        # Set first protein in the middle of the board (no parent -> None)
+        board_middle = (protein_length, protein_length)
         self.put_peptide(board_middle, protein.peptides[0], None)
         self.last_set_coords = board_middle
 
@@ -24,8 +27,7 @@ class Board:
         # All but the first one since it's always placed in the board middle
         self.protein = protein.peptides[1:]
 
-
-        self.folding = set()
+        self.chain_coordinates = set()
         # self.score? voor opslaan van boards zodra er meerdere verschillende
         # worden gegenerate?
 
@@ -58,8 +60,8 @@ class Board:
                     print(self.grid[y][x], end = "")
                 # printing horizontal bonds
                 if (
-                    ((x, y), (x + 1, y)) in self.folding or
-                    ((x + 1, y), (x, y)) in self.folding
+                    ((x, y), (x + 1, y)) in self.chain_coordinates or
+                    ((x + 1, y), (x, y)) in self.chain_coordinates
                    ):
                     print(" — ", end = "")
                 else:
@@ -69,8 +71,8 @@ class Board:
             # printing the vertical bonds
             for x in range(xrange[0], xrange[1] + 1):
                 if (
-                    ((x, y), (x, y + 1)) in self.folding or
-                    ((x, y + 1), (x, y)) in self.folding
+                    ((x, y), (x, y + 1)) in self.chain_coordinates or
+                    ((x, y + 1), (x, y)) in self.chain_coordinates
                    ):
                     print("|   ", end = "")
                 else:
@@ -91,10 +93,11 @@ class Board:
             parent.set_child(new_peptide)
 
 
-    # Nodig?? - Ja, voor visualisatie van bonds
+
+    # Add coordinate pairs which represent the chain-bonds between peptides to
+    # the board. This is used for visualization of the chain.
     def add_connection(self, orig, dest):
-    # Add a connection between peptides to the collection in board
-        self.folding.add((orig, dest))
+        self.chain_coordinates.add((orig, dest))
 
 
     # Get non-occupied neighbouring (NWSE) tiles of board grid
@@ -104,7 +107,6 @@ class Board:
         
         return [direction for direction in neighbors 
                 if neighbors[direction] == 0]
-
 
 
     # Return contents of grid space at coords loc
