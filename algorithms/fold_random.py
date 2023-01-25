@@ -20,7 +20,7 @@ def fold_random(protein):
 def place_random(board, peptide):
     x, y = board.last_set_coords
         
-    possible_directions = board.get_possible_directions(x, y)
+    possible_directions = board.get_possible_directions()
     if not possible_directions:
         return 1
     
@@ -52,7 +52,7 @@ def random_folder(protein, iterations):
         result = fold_random(protein)
         
         if result:
-            score = result.calc_board_score()
+            score = result.calc_board_score_2()
             if score < best_score:
                 best_score = score
                 best_board = result
