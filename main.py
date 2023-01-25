@@ -3,24 +3,32 @@ import sys
 from classes.protein import *
 from classes.board import *
 from algorithms.fold_random import *
+from algorithms.bfs import *
 
 
 
 
 # Reading input
-if len(sys.argv) == 2:
-    protein = read_protein("proteins/" + sys.argv[1])
+if len(sys.argv) == 3:
+    protein = read_protein("proteins/" + sys.argv[2])
     if protein == 1:
         exit(1)
 else:
-    print("Usage: fold.py [name of file containing protein]")
+    print("Usage: fold.py [algorithm to use] [name of file containing protein]")
+    print("Algorithms:")
+    print("    - random")
+    print("    - bfs")
     exit(1)
 
 print(protein.peptides)
 print()
 
-
-solved_board, score = random_folder(protein, 10000)
+if sys.argv[1] == "random":
+    solved_board, score = random_folder(protein, 10000)
+elif sys.argv[1] == "bfs":
+    solved_board, score = bfs(protein)
+else:
+    print("unrecognized algorithm")
 
 
 solved_board.display()
