@@ -1,0 +1,34 @@
+Results:
+random_folder (best of 10000 runs)
+###################################
+    (all decently fast, < 5 seconds)
+    protein1: -6 score
+    protein5: -16 score
+    protein8: -19 score
+
+
+
+BFS:
+###################################
+    protein1: no result, too slow
+    protein5: too slow
+    protein8: too slow
+
+
+
+
+BFS + beam search:
+###################################
+
+100 most promising results:
+    protein1: -6 score (~1 sec)
+    protein5: -22 score (~10 sec)
+    protein8: -28 score (pretty fast, ~0.5 min)
+
+1000 most promising results:
+    protein1: -6 score (~5 sec)
+    protein5: -22 score (~2 min)
+    protein8: -34 score (Slow, 5+ minutes)
+
+
+

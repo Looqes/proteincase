@@ -9,7 +9,7 @@ def bfs(protein):
 
     final_states = bfs_states(start_board)
 
-    return get_best_board(final_states)
+    return final_states[0]
 
     
 
@@ -21,8 +21,9 @@ def bfs_states(start_board):
     for peptide in start_board.protein:
         new_boards = []
 
+        # Extend all boards in collection with each of their possible moves.
+        # Attempt to place each peptide in each possible direction.
         for board in boards:
-        # Attempt to place each peptide in each possible direction
             directions = board.get_possible_directions()
             
             for dir in directions:
@@ -31,14 +32,10 @@ def bfs_states(start_board):
 
                 new_boards.append(new_board)
 
-        boards = new_boards
-
         # Pruning, taking only most promising 100 boards
-        boards_with_scores = assign_board_scores(boards)
-        sorted_boards = sort_boards(boards_with_scores)
-        # Take only boards, leave scores
-        boards = [pair[0] for pair in sorted_boards[0:100]]
-    
+        boards = sort_boards(new_boards)[0:1000]
+        # boards = sort_boards(new_boards)
+
     return boards
 
 
@@ -61,21 +58,5 @@ def add_move(board, direction, peptide):
     board.last_set_coords = (newx, newy)
 
 
-def get_best_board(boards):
-    boards_with_scores = assign_board_scores(boards)
-
-    sorted_boards = sort_boards(boards_with_scores)
-
-    return sorted_boards[0]
-
-def assign_board_scores(boards_list):
-    boards_with_scores = []
-
-    for board in boards_list:
-        score = board.calc_board_score_2()
-        boards_with_scores.append((board, score))
-    
-    return boards_with_scores
-
-def sort_boards(boards_scores_list):
-    return sorted(boards_scores_list, key=lambda x: x[1])
+def sort_boards(boards_list):
+    return sorted(boards_list, key=lambda x: x.score)

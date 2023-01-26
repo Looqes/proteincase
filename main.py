@@ -25,16 +25,16 @@ print()
 
 if sys.argv[1] == "random":
     # solved_board, score = random_folder(protein, 10000)
-    solved_board, score = random_folder(protein, 10000)
+    solved_board = random_folder(protein, 10000)
 
 elif sys.argv[1] == "bfs":
-    solved_board, score = bfs(protein)
+    solved_board = bfs(protein)
 else:
     print("unrecognized algorithm")
 
 if solved_board:
     solved_board.display()
-    print(score)
+    print(solved_board.score)
 else:
     print("No solved board was made...")
 

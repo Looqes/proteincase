@@ -58,7 +58,7 @@ def random_folder(protein, iterations):
                 best_score = score
                 best_board = result
 
-    return best_board, best_board.score
+    return best_board
 
 
 
